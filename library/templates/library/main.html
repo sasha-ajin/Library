@@ -1,4 +1,16 @@
 {% extends 'library/base.html' %}
 {% block content %}
+    {#   Form for time #}
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ form }}
+    <input class="btn login_btn" type="submit" value="Change time">
+    </form>
+    {% if request.user.is_authenticated %}
 
+        <p>Hello {{ user.get_username }}</p>
+
+    {% else %}
+        <p>You're unauthenticated</p>
+    {% endif %}
 {% endblock %}

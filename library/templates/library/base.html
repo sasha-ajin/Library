@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CRUD</title>
+    <title>Library</title>
     {% load static %}
     <!--  Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -11,18 +11,36 @@
     <!--  Main  -->
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
-<body style="background-color: #7abecc">
+<body style="background-color: #7abecc;color: #fff;">
 
 <nav class="navbar navbar-expand-md  navbar-dark" style="background:  #74cfbf   ;color: #fff;">
     <div class="container ">
         <a class="navbar-brand " href="{% url 'main' %}"><h1>Library</h1></a>
+    </div>
+    {% if request.user.is_authenticated %}
+        <div class="form-inline my-2 my-lg-0" style="margin-right: 16px">
+            <img src="{% static 'images/profile.png' %}" alt="Oops.." style="width: 50px">
+        </div>
+
+    {% endif %}
+    <div class="form-inline my-2 my-lg-0" style="margin-left: 16px;">
+
+        {% if request.user.is_authenticated %}
+
+            <a href="{% url 'log_out' %}" style="text-decoration: none !important;">
+                <span >Log out</span>
+            </a>
+        {% else %}
+            <a href="{% url 'log_in' %}" style="text-decoration: none !important;">
+                <span >Log in</span>
+            </a>
+        {% endif %}
     </div>
 
 </nav>
 <br>
 
 {% block content %}
-
 {% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
