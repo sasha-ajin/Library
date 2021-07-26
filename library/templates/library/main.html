@@ -51,7 +51,7 @@
                                             Rent for 7 days
                                         </button>
                                     </a>
-                                {% elif not book.free %}
+                                {% elif request.user.is_authenticated and not book.free %}
                                     <button class="btn login_btn"
                                             data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
                                         Rent for 7 day
