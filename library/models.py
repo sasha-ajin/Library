@@ -56,7 +56,7 @@ class Order(models.Model):
     start_date = models.DateTimeField(default=Time.objects.get(id=1).time)
     end_date = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, )
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, related_name='orders')
 
     def __str__(self):
         return f" book {self.book} for {self.user}" \

@@ -12,8 +12,9 @@ from .models import Time, Book, Order
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from .serializers import OrderSerializer
+from rest_framework.parsers import JSONParser
+from rest_framework.viewsets import ViewSet
+from .serializers import OrderSerializer, BookSerializer
 
 
 class Main(FormView):
@@ -96,6 +97,46 @@ def log_out(request):
     return redirect('log_in')
 
 
+class OrderViewSet(ViewSet):
+    def list(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        request.data['user'] = request.user.id
+        start_date = Time.objects.get(id=1).time
+        end_date = Time.objects.get(id=1).time + datetime.timedelta(days=7)
+        # "2021-06-22T19:59:00Z"
+        request.data['start_date'] = date_to_json_string(start_date)
+        request.data['end_date'] = date_to_json_string(end_date)
+        order = OrderSerializer(data=request.data)
+        order.is_valid(raise_exception=True)
+        order.save()
+        return Response(order.data)
+
+    def retrieve(self, request, pk):
+        order = Order.objects.get(id=pk)
+        serializer = OrderSerializer(order, many=False)
+        return Response(serializer.data)
+
+
+class OrderCreateView(APIView):
+    # parser_classes = [JSONParser]
+
+    def post(self, request, format=None):
+        request.data['user'] = request.user.id
+        start_date = Time.objects.get(id=1).time
+        end_date = Time.objects.get(id=1).time + datetime.timedelta(days=7)
+        # "2021-06-22T19:59:00Z"
+        request.data['start_date'] = date_to_json_string(start_date)
+        request.data['end_date'] = date_to_json_string(end_date)
+        order = OrderSerializer(data=request.data)
+        order.is_valid(raise_exception=True)
+        order.save()
+        return Response(order.data)
+
+
 class OrderListView(APIView):
     def get(self, request):
         orders = Order.objects.all()
@@ -110,17 +151,15 @@ class OrderDetailView(APIView):
         return Response(serializer.data)
 
 
-class OrderCreateView(APIView):
-    parser_classes = [JSONParser]
+class BookView(APIView):
+    def get(self, request):
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
 
-    def post(self, request, format=None):
-        request.data['user'] = request.user.id
-        start_date = Time.objects.get(id=1).time
-        end_date = Time.objects.get(id=1).time + datetime.timedelta(days=7)
-        # "2021-06-22T19:59:00Z"
-        request.data['start_date'] = date_to_json_string(start_date)
-        request.data['end_date'] = date_to_json_string(end_date)
-        order = OrderSerializer(data=request.data)
-        order.is_valid(raise_exception=True)
-        order.save()
-        return Response(order.data)
+
+class BookDetailView(APIView):
+    def get(self, request, pk):
+        book = Book.objects.get(id=pk)
+        serializer = BookSerializer(book, many=False)
+        return Response(serializer.data)
