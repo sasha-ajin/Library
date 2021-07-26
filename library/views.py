@@ -97,7 +97,6 @@ def log_out(request):
     return redirect('log_in')
 
 
-<<<<<<< HEAD
 class OrderViewSet(ViewSet):
     def list(self, request):
         orders = Order.objects.all()
@@ -152,7 +151,6 @@ class OrderDetailView(APIView):
         return Response(serializer.data)
 
 
-
 class BookView(APIView):
     def get(self, request):
         books = Book.objects.all()
@@ -165,5 +163,3 @@ class BookDetailView(APIView):
         book = Book.objects.get(id=pk)
         serializer = BookSerializer(book, many=False)
         return Response(serializer.data)
-
-
