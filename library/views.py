@@ -122,8 +122,6 @@ class OrderViewSet(ViewSet):
         return Response(serializer.data)
 
 
-=======
->>>>>>> 2f118aa06da02bb0cb867a092d7a7552243038db
 class OrderCreateView(APIView):
     # parser_classes = [JSONParser]
 
@@ -152,7 +150,7 @@ class OrderDetailView(APIView):
         order = Order.objects.get(id=pk)
         serializer = OrderSerializer(order, many=False)
         return Response(serializer.data)
-<<<<<<< HEAD
+
 
 
 class BookView(APIView):
@@ -167,5 +165,5 @@ class BookDetailView(APIView):
         book = Book.objects.get(id=pk)
         serializer = BookSerializer(book, many=False)
         return Response(serializer.data)
-=======
->>>>>>> 2f118aa06da02bb0cb867a092d7a7552243038db
+
+
