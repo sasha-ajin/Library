@@ -1,11 +1,12 @@
-#logo {
+.roller-books{
+    padding-top: 35px;
+    /*background-color: white;*/
 }
-
-body {
-    background-color: #ebeff5;
+.table-books{
+    background-color: white;
+    color: black;
+    border-radius: 25px;
 }
-
-
 #total-orders {
     background-color: #4cb4c7;
 }

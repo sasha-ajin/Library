@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'django_filters',
-    'library'
+    'library',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'library.middleware.ChangingTimeForNowMiddleware',
+    'library.middleware.DeleteNewOrdersMiddleware',
 ]
 
 ROOT_URLCONF = 'CRUD.urls'
@@ -75,8 +78,12 @@ WSGI_APPLICATION = 'CRUD.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'LIBRARY DATABASE',
+        'USER': 'postgres',
+        'PASSWORD': 'sashasasha123',
+        'HOST': 'localhost',
+        'POST': '5432',
     }
 }
 
@@ -124,3 +131,8 @@ MEDIA_URL = '/images/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ]
+}

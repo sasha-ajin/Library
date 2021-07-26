@@ -9,6 +9,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <!--  Main  -->
+    <link type="text/javascript" href="{% static 'js/order-making.js' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 <body style="background-color: #7abecc;color: #fff;">
@@ -19,7 +20,9 @@
     </div>
     {% if request.user.is_authenticated %}
         <div class="form-inline my-2 my-lg-0" style="margin-right: 16px">
-            <img src="{% static 'images/profile.png' %}" alt="Oops.." style="width: 50px">
+            <a href="{% url 'my_profile' %}">
+                <img src="{% static 'images/profile.png' %}" alt="Oops.." style="width: 50px">
+            </a>
         </div>
 
     {% endif %}
@@ -28,11 +31,11 @@
         {% if request.user.is_authenticated %}
 
             <a href="{% url 'log_out' %}" style="text-decoration: none !important;">
-                <span >Log out</span>
+                <span>Log out</span>
             </a>
         {% else %}
             <a href="{% url 'log_in' %}" style="text-decoration: none !important;">
-                <span >Log in</span>
+                <span>Log in</span>
             </a>
         {% endif %}
     </div>

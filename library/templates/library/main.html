@@ -1,10 +1,13 @@
 {% extends 'library/base.html' %}
+{% load static %}
+
 {% block content %}
     {#   Form for time #}
+    <p>Time now: {{ time }}</p>
     <form method="POST" action="">
         {% csrf_token %}
         {{ form }}
-    <input class="btn login_btn" type="submit" value="Change time">
+        <input class="btn login_btn" type="submit" value="Change time">
     </form>
     {% if request.user.is_authenticated %}
 
@@ -13,4 +16,53 @@
     {% else %}
         <p>You're unauthenticated</p>
     {% endif %}
+
+    <div class="d-flex justify-content-center roller-books">
+        <div class="col-md-10 ">
+            <div class=" card-body table-books">
+                <br>
+                <table class="table table-sm table-books">
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Quantity</th>
+                        <th>Free books</th>
+                        <th>Price</th>
+                        <th>Cover</th>
+                        <th>Make the rent</th>
+                    </tr>
+
+                    {% for book in books %}
+                        <tr>
+                            <td><img src="{{ book.image_url }}" alt="Book's no image" style="height: 100px"></td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>{{ book.quantity_of_books }}</td>
+                            <td>{{ book.quantity_of_free }}</td>
+                            <td>{{ book.price }}</td>
+                            <td>{{ book.cover }}</td>
+                            <td>
+                                {% if request.user.is_authenticated %}
+                                    {% csrf_token %}
+                                    <a href="{% url 'main' %} ">
+                                        <button class="btn login_btn" id="button-order-create"
+                                                data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
+                                            Rent for 7 days
+                                        </button>
+                                    </a>
+
+                                {% else %}
+                                    <a href="{% url 'log_in' %} ">
+                                        <button class="btn btn-info">Rent for 7 days</button>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static 'js/order-making.js' %}"></script>
 {% endblock %}

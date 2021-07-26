@@ -1,6 +1,7 @@
 from django.forms import Form, CharField, PasswordInput, DateTimeField
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from . import models
 
 
 class LoginUserForm(Form):
@@ -15,4 +16,7 @@ class CreateUserForm(UserCreationForm):
 
 
 class DateTimeForm(Form):
-    time = DateTimeField(help_text='2021-06-30 08:11:01', input_formats=['%Y-%m-%d %H:%M:%S'])
+    time = DateTimeField(required=True,  input_formats=['%Y-%m-%d %H:%M'],
+                         initial=None, disabled=False)
+
+# help_text=f"{models.Time.objects.get(id=1)} time now"
