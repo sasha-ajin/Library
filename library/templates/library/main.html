@@ -39,11 +39,11 @@
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.quantity_of_books }}</td>
-                            <td>{{ book.quantity_of_free }}</td>
+                            <td>{{ book.quantity_of_free }} </td>
                             <td>{{ book.price }}</td>
                             <td>{{ book.cover }}</td>
                             <td>
-                                {% if request.user.is_authenticated %}
+                                {% if request.user.is_authenticated and book.free %}
                                     {% csrf_token %}
                                     <a href="{% url 'main' %} ">
                                         <button class="btn login_btn" id="button-order-create"
@@ -51,7 +51,11 @@
                                             Rent for 7 days
                                         </button>
                                     </a>
-
+                                {% elif not book.free %}
+                                    <button class="btn login_btn"
+                                            data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
+                                        Rent for 7 day
+                                    </button>
                                 {% else %}
                                     <a href="{% url 'log_in' %} ">
                                         <button class="btn btn-info">Rent for 7 days</button>

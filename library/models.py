@@ -66,6 +66,8 @@ class Order(models.Model):
     def clean(self):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError(f'start_date {self.start_date} is grater than end_date {self.end_date}')
+        if not self.book.free:
+            raise exceptions.ValidationError("Book is not free")
 
     def rent_time(self):
         return self.end_date - self.start_date
