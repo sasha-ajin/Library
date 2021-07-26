@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django import views
 from django.views.generic import FormView
+from django.core import exceptions
 import datetime
 
 from .forms import LoginUserForm, CreateUserForm, DateTimeForm
@@ -111,8 +112,10 @@ class OrderViewSet(ViewSet):
         request.data['start_date'] = date_to_json_string(start_date)
         request.data['end_date'] = date_to_json_string(end_date)
         order = OrderSerializer(data=request.data)
-        order.is_valid(raise_exception=True)
-        order.save()
+        if not Book.objects.get(id=request.data['book']).free:
+            return Response((['Book is not free']))
+        if order.is_valid():
+            order.save()
         return Response(order.data)
 
     def retrieve(self, request, pk):
