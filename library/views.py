@@ -96,20 +96,6 @@ def log_out(request):
     return redirect('log_in')
 
 
-class OrderListView(APIView):
-    def get(self, request):
-        orders = Order.objects.all()
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data)
-
-
-class OrderDetailView(APIView):
-    def get(self, request, pk):
-        order = Order.objects.get(id=pk)
-        serializer = OrderSerializer(order, many=False)
-        return Response(serializer.data)
-
-
 class OrderCreateView(APIView):
     parser_classes = [JSONParser]
 
@@ -124,3 +110,17 @@ class OrderCreateView(APIView):
         order.is_valid(raise_exception=True)
         order.save()
         return Response(order.data)
+
+
+class OrderListView(APIView):
+    def get(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+class OrderDetailView(APIView):
+    def get(self, request, pk):
+        order = Order.objects.get(id=pk)
+        serializer = OrderSerializer(order, many=False)
+        return Response(serializer.data)
