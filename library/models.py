@@ -38,7 +38,6 @@ class Book(models.Model):
     def max_date_to_order(self, request):
         time_now = request.time
         max_available_date_to_order = time_now + datetime.timedelta(days=7)
-        print(time_now)
         total_quantity_of_book = self.quantity_of_books
         orders_in_max_period = Order.objects.filter(start_date__lt=max_available_date_to_order,
                                                     end_date__gt=time_now, book=self).order_by('start_date')
@@ -53,18 +52,14 @@ class Book(models.Model):
         critical_points = sorted(reduce(lambda l1, l2: l1.extend(l2) or l1, critical_points, []))
         orders_in_max_period = Order.objects.filter(start_date__lt=max_available_date_to_order,
                                                     end_date__gt=time_now, book=self).order_by('start_date')
-        print(orders_in_max_period)
-        print(critical_points)
         max_endpoint = time_now
         for critical_point in critical_points:
             start_dates_before_critical_point = orders_in_max_period.filter(start_date__lt=critical_point).values_list(
                 'start_date')
             end_dates_before_critical_point = orders_in_max_period.filter(end_date__lt=critical_point).values_list(
                 'end_date')
-            print(critical_point)
-            print(start_dates_before_critical_point.count())
+
             ordered_books = start_dates_before_critical_point.count() - end_dates_before_critical_point.count()
-            print(end_dates_before_critical_point.count())
             if ordered_books < total_quantity_of_book and critical_point >= max_endpoint:
                 max_endpoint = critical_point
             else:
