@@ -47,7 +47,6 @@
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.quantity_of_books }}</td>
-<<<<<<< HEAD
                             {% if max_date_to_order > time %}
                                 <td>{{ max_date_to_order |date:"Y-m-j G:i" }}</td>
                             {% else %}
@@ -77,24 +76,6 @@
                                 {% elif max_days_to_order <= 0 %}
                                     <button class="btn login_btn" disabled>
                                         Book is not free
-=======
-                            <td>{{ book.quantity_of_free }} </td>
-                            <td>{{ book.price }}</td>
-                            <td>{{ book.cover }}</td>
-                            <td>
-                                {% if request.user.is_authenticated and book.free %}
-                                    {% csrf_token %}
-                                    <a href="{% url 'main' %} ">
-                                        <button class="btn login_btn" id="button-order-create"
-                                                data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
-                                            Rent for 7 days
-                                        </button>
-                                    </a>
-                                {% elif request.user.is_authenticated and not book.free %}
-                                    <button class="btn login_btn"
-                                            data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
-                                        Rent for 7 day
->>>>>>> d59bf797e67b4c7b7a89a7da0f1befb69348722e
                                     </button>
                                 {% else %}
                                     <a href="{% url 'log_in' %} ">
