@@ -40,6 +40,22 @@ class Main(views.View):
         return render(request, 'library/main.html', context)
 
 
+@login_required(login_url='log_in')
+def my_profile(request):
+    user_obj = request.user
+    time = request.time
+
+    user_not_returned_orders = Order.objects.filter(user=user_obj, start_date__lte=time, end_date__gt=time)
+    user_returned_orders = Order.objects.filter(user=user_obj, start_date__lt=time, end_date__lt=time)
+    reservations = Order.objects.filter(start_date__gt=time, user=user_obj)
+    context = {'user_not_returned_orders': user_not_returned_orders, 'user_returned_orders': user_returned_orders,
+               'reservations': reservations, 'quantity_user_not_returned_orders': user_not_returned_orders.count(),
+               'quantity_user_returned_orders': user_returned_orders.count(),
+               'quantity_reservations': reservations.count}
+
+    return render(request, 'library/my_profile.html', context)
+
+
 class Register(FormView):
     template_name = 'library/register.html'
     form_class = CreateUserForm
@@ -105,22 +121,6 @@ class OrderViewSet(ViewSet):
         order = Order.objects.get(id=pk)
         serializer = OrderSerializer(order, many=False)
         return Response(serializer.data)
-
-
-@login_required(login_url='log_in')
-def my_profile(request):
-    user_obj = request.user
-    time = request.time
-
-    user_not_returned_orders = Order.objects.filter(user=user_obj, start_date__lte=time, end_date__gt=time)
-    user_returned_orders = Order.objects.filter(user=user_obj, start_date__lt=time, end_date__lt=time)
-    reservations = Order.objects.filter(start_date__gt=time, user=user_obj)
-    context = {'user_not_returned_orders': user_not_returned_orders, 'user_returned_orders': user_returned_orders,
-               'reservations': reservations, 'quantity_user_not_returned_orders': user_not_returned_orders.count(),
-               'quantity_user_returned_orders': user_returned_orders.count(),
-               'quantity_reservations': reservations.count}
-
-    return render(request, 'library/my_profile.html', context)
 
 
 class BookView(APIView):
