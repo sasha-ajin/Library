@@ -89,9 +89,14 @@ class OrderViewSet(ViewSet):
         request.data['start_date'] = date_to_json_string(start_date)
         request.data['end_date'] = date_to_json_string(end_date)
         order = OrderSerializer(data=request.data)
+<<<<<<< HEAD
         book = Book.objects.get(id=request.data['book'])
         if end_date > book.max_date_to_order(request=request):
             raise exceptions.ValidationError(f'Book {order.book.title} is not free in {end_date}')
+=======
+        if not Book.objects.get(id=request.data['book']).free:
+            return Response((['Book is not free']))
+>>>>>>> d59bf797e67b4c7b7a89a7da0f1befb69348722e
         if order.is_valid():
             order.save()
         return Response(order.data)
