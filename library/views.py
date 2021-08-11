@@ -1,47 +1,43 @@
-import json
 from .utils import date_to_json_string
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django import views
 from django.views.generic import FormView
 from django.core import exceptions
 import datetime
+import operator
 
 from .forms import LoginUserForm, CreateUserForm, DateTimeForm
-from .models import Time, Book, Order
+from .models import Book, Order, TimeUser
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import JSONParser
 from rest_framework.viewsets import ViewSet
 from .serializers import OrderSerializer, BookSerializer
 
 
-class Main(FormView):
-    template_name = 'library/main.html'
-    form_class = DateTimeForm
-
-    def form_valid(self, form):
-        time = form.cleaned_data['time']
-        object_time = Time.objects.get(id=1)
-        if object_time.time > time:
-            print('Time was reduced')
-        elif object_time.time < time:
-            print('Time was increased')
+class Main(views.View):
+    def post(self, request):
+        form = DateTimeForm(request.POST)
+        if form.is_valid() and request.user.is_authenticated:
+            form_time = form.cleaned_data['time']
+            current_time = TimeUser.objects.get(user=self.request.user)
+            current_time.time = form_time
+            current_time.save()
+            return redirect('main')
         else:
-            print('Time was not changed')
-        object_time.time = time
-        object_time.save()
-        return redirect('main')
+            messages.info(request, 'Not valid date')
+            return self.get(request)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        object_time = Time.objects.get(id=1)
-        context['time'] = object_time
-        books = Book.objects.all()
-        context['books'] = books
-        return context
+    def get(self, request):
+        context = {}
+        context['time'] = request.time
+        context['books'] = Book.objects.all()
+        context['user'] = request.user.id
+        context['form'] = DateTimeForm
+        return render(request, 'library/main.html', context)
 
 
 class Register(FormView):
@@ -74,25 +70,6 @@ class LogIn(views.View):
 
 
 @login_required(login_url='log_in')
-def my_profile(request):
-    user_obj = request.user
-    user_orders = Order.objects.filter(user=user_obj)
-
-    quantity_user_orders = user_orders.count()
-    context = {'quantity_user_orders': quantity_user_orders, 'user_orders': user_orders}
-
-    user_returned_orders = Order.objects.filter(user=user_obj, end_date__lt=Time.objects.get(id=1).time)
-    context['user_returned_orders'] = user_returned_orders
-    context['quantity_user_returned_orders'] = user_returned_orders.count()
-
-    user_not_returned_orders = Order.objects.filter(user=user_obj, end_date__gte=Time.objects.get(id=1).time)
-    context['user_not_returned_orders'] = user_not_returned_orders
-    context['quantity_user_not_returned_orders'] = user_not_returned_orders.count()
-
-    return render(request, 'library/my_profile.html', context)
-
-
-@login_required(login_url='log_in')
 def log_out(request):
     logout(request)
     return redirect('log_in')
@@ -106,14 +83,15 @@ class OrderViewSet(ViewSet):
 
     def create(self, request):
         request.data['user'] = request.user.id
-        start_date = Time.objects.get(id=1).time
-        end_date = Time.objects.get(id=1).time + datetime.timedelta(days=7)
+        start_date = request.time
+        end_date = request.time + datetime.timedelta(days=int(request.data['days_to_rent']))
         # "2021-06-22T19:59:00Z"
         request.data['start_date'] = date_to_json_string(start_date)
         request.data['end_date'] = date_to_json_string(end_date)
         order = OrderSerializer(data=request.data)
-        if not Book.objects.get(id=request.data['book']).free:
-            return Response((['Book is not free']))
+        book = Book.objects.get(id=request.data['book'])
+        if end_date > book.max_date_to_order(request=request):
+            raise exceptions.ValidationError(f'Book {order.book.title} is not free in {end_date}')
         if order.is_valid():
             order.save()
         return Response(order.data)
@@ -122,6 +100,22 @@ class OrderViewSet(ViewSet):
         order = Order.objects.get(id=pk)
         serializer = OrderSerializer(order, many=False)
         return Response(serializer.data)
+
+
+@login_required(login_url='log_in')
+def my_profile(request):
+    user_obj = request.user
+    time = request.time
+
+    user_not_returned_orders = Order.objects.filter(user=user_obj, start_date__lte=time, end_date__gt=time)
+    user_returned_orders = Order.objects.filter(user=user_obj, start_date__lt=time, end_date__lt=time)
+    reservations = Order.objects.filter(start_date__gt=time, user=user_obj)
+    context = {'user_not_returned_orders': user_not_returned_orders, 'user_returned_orders': user_returned_orders,
+               'reservations': reservations, 'quantity_user_not_returned_orders': user_not_returned_orders.count(),
+               'quantity_user_returned_orders': user_returned_orders.count(),
+               'quantity_reservations': reservations.count}
+
+    return render(request, 'library/my_profile.html', context)
 
 
 class BookView(APIView):
@@ -136,3 +130,31 @@ class BookDetailView(APIView):
         book = Book.objects.get(id=pk)
         serializer = BookSerializer(book, many=False)
         return Response(serializer.data)
+
+# class Main(FormView):
+#     template_name = 'library/main.html'
+#     form_class = DateTimeForm
+#
+#     def form_valid(self, form):
+#         if self.request.user.is_authenticated:
+#             form_time = form.cleaned_data['time']
+#             # if object_time > form_time:
+#             #     print('Time was reduced')
+#             # elif object_time < form_time:
+#             #     print('Time was increased')
+#             # else:
+#             #     print('Time was not changed')
+#             current_time = TimeUser.objects.get(user=self.request.user)
+#             current_time.time = form_time
+#             current_time.save()
+#         return redirect('main')
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         object_time = self.request.time
+#         context['time'] = object_time
+#         books = Book.objects.all()
+#         context['books'] = books
+#         user = self.request.user.id
+#         context['user'] = user
+#         return context

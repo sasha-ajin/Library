@@ -1,17 +1,23 @@
 {% extends 'library/base.html' %}
 {% load static %}
+{% load tags %}
 
 {% block content %}
-    {#   Form for time #}
-    <p>Time now: {{ time }}</p>
+    <p>Time now: {{ time|date:"Y-m-j G:i" }}</p>
     <form method="POST" action="">
         {% csrf_token %}
-        {{ form }}
-        <input class="btn login_btn" type="submit" value="Change time">
+        {% for message in messages %}
+            <li style="margin-left: 4px">{{ message }}</li>
+            <br>
+        {% endfor %}
+        {% if request.user.is_authenticated %}
+            {{ form }}
+            <input class="btn login_btn" type="submit" value="Change time">
+        {% endif %}
     </form>
     {% if request.user.is_authenticated %}
 
-        <p>Hello {{ user.get_username }}</p>
+        <p>Hello {{ request.user }}</p>
 
     {% else %}
         <p>You're unauthenticated</p>
@@ -27,38 +33,53 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Quantity</th>
-                        <th>Free books</th>
+                        <th>Free to</th>
                         <th>Price</th>
                         <th>Cover</th>
+                        <th>Days to rent</th>
                         <th>Make the rent</th>
                     </tr>
-
                     {% for book in books %}
+                        {% max_days_to_order book request as max_days_to_order %}
+                        {% max_date_to_order book request as max_date_to_order %}
                         <tr>
                             <td><img src="{{ book.image_url }}" alt="Book's no image" style="height: 100px"></td>
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.quantity_of_books }}</td>
-                            <td>{{ book.quantity_of_free }} </td>
+                            {% if max_date_to_order > time %}
+                                <td>{{ max_date_to_order |date:"Y-m-j G:i" }}</td>
+                            {% else %}
+{#                                <td>Book is not free</td>#}
+                                <td>{{ max_date_to_order |date:"Y-m-j G:i" }}</td>
+                            {% endif %}
                             <td>{{ book.price }}</td>
                             <td>{{ book.cover }}</td>
                             <td>
-                                {% if request.user.is_authenticated and book.free %}
+                                {% if max_days_to_order > 0 %}
+                                    <select name="" id="select-day-{{ book.id }}">
+                                        {% for day in max_days_to_order|times %}
+                                            <option value="{{ day }}">{{ day }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if request.user.is_authenticated and max_days_to_order > 0 %}
                                     {% csrf_token %}
-                                    <a href="{% url 'main' %} ">
-                                        <button class="btn login_btn" id="button-order-create"
-                                                data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
-                                            Rent for 7 days
-                                        </button>
-                                    </a>
-                                {% elif not book.free %}
-                                    <button class="btn login_btn"
+                                    <button class="btn login_btn " id="button-order-create"
                                             data-book_id="{{ book.id }}" data-book_name="{{ book.title }}">
-                                        Rent for 7 day
+                                        Rent
+                                    </button>
+                                {% elif max_days_to_order <= 0 %}
+                                    <button class="btn login_btn" disabled>
+                                        Book is not free
                                     </button>
                                 {% else %}
                                     <a href="{% url 'log_in' %} ">
-                                        <button class="btn btn-info">Rent for 7 days</button>
+                                        <button class="btn btn-info">Log in to make a rent</button>
                                     </a>
                                 {% endif %}
                             </td>

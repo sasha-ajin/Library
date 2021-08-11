@@ -1,15 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count
+from functools import reduce
 from django.core import exceptions
+import datetime
 
 
 class Time(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        # return str(self.time)
         return f"{self.time.year}-{self.time.month}-{self.time.day} {self.time.hour}:{self.time.minute}"
+
+
+class TimeUser(models.Model):
+    time = models.DateTimeField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f"{self.time.year}-{self.time.month}-{self.time.day} {self.time.hour}:{self.time.minute} / {self.user}"
 
 
 class Book(models.Model):
@@ -27,21 +35,44 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def quantity_of_free(self):
-        not_free_books = Order.objects.filter(book=self, end_date__gte=Time.objects.get(id=1).time)
-        quantity_not_free_books = not_free_books.count()
-        return self.quantity_of_books - quantity_not_free_books
+    def max_date_to_order(self, request):
+        time_now = request.time
+        max_available_date_to_order = time_now + datetime.timedelta(days=7)
+        print(time_now)
+        total_quantity_of_book = self.quantity_of_books
+        orders_in_max_period = Order.objects.filter(start_date__lt=max_available_date_to_order,
+                                                    end_date__gt=time_now, book=self).order_by('start_date')
 
-    @property
-    def free(self):
-        not_free_books = Order.objects.filter(book=self, end_date__gte=Time.objects.get(id=1).time)
-        quantity_not_free_books = not_free_books.count()
-        quantity_of_free = self.quantity_of_books - quantity_not_free_books
-        if quantity_of_free > 0:
-            return True
-        else:
-            return False
+        critical_points = list(orders_in_max_period.filter(start_date__gte=time_now).values_list(
+            'start_date'))  # dates when quantity of ordered books changed
+
+        critical_points += list(orders_in_max_period.filter(end_date__lt=max_available_date_to_order).values_list(
+            'end_date'))
+        critical_points.append([max_available_date_to_order])
+
+        critical_points = sorted(reduce(lambda l1, l2: l1.extend(l2) or l1, critical_points, []))
+        orders_in_max_period = Order.objects.filter(start_date__lt=max_available_date_to_order,
+                                                    end_date__gt=time_now, book=self).order_by('start_date')
+        print(orders_in_max_period)
+        print(critical_points)
+        max_endpoint = time_now
+        for critical_point in critical_points:
+            start_dates_before_critical_point = orders_in_max_period.filter(start_date__lt=critical_point).values_list(
+                'start_date')
+            end_dates_before_critical_point = orders_in_max_period.filter(end_date__lt=critical_point).values_list(
+                'end_date')
+            print(critical_point)
+            print(start_dates_before_critical_point.count())
+            ordered_books = start_dates_before_critical_point.count() - end_dates_before_critical_point.count()
+            print(end_dates_before_critical_point.count())
+            if ordered_books < total_quantity_of_book and critical_point >= max_endpoint:
+                max_endpoint = critical_point
+            else:
+                return max_endpoint
+        return max_endpoint
+
+    def max_days_to_order(self, request):
+        return (self.max_date_to_order(request=request) - request.time).days
 
     @property
     def image_url(self):
@@ -53,7 +84,7 @@ class Book(models.Model):
 
 
 class Order(models.Model):
-    start_date = models.DateTimeField(default=Time.objects.get(id=1).time)
+    start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, related_name='orders')
@@ -66,11 +97,10 @@ class Order(models.Model):
     def clean(self):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError(f'start_date {self.start_date} is grater than end_date {self.end_date}')
-        if not self.book.free:
-            raise exceptions.ValidationError("Book is not free")
 
+    @property
     def rent_time(self):
         return self.end_date - self.start_date
 
-    def time_to_return(self):
-        return self.end_date - Time.objects.get(id=1).time
+    def time_to_return(self, request):
+        return self.end_date - request.time

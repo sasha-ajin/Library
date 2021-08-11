@@ -1,19 +1,21 @@
 {% extends 'library/base.html' %}
 {% load static %}
+{% load tags %}
 {% block content %}
     <div class="row" style="margin-top: 4%">
         <div class="col">
             <div class="col-md">
                 <div class="card text-center text-white  mb-3" id="total-orders">
                     <div class="card-header">
-                        <h5 class="card-title">Total books</h5>
+                        <h5 class="card-title">Reservations</h5>
                     </div>
                     <div class="card-body">
-                        <h3 class="card-title">{{ quantity_user_orders }}</h3>
+                        <h3 class="card-title">{{ quantity_reservations }}</h3>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="col">
             <div class="col-md">
                 <div class="card text-center text-white  mb-3" id="orders-pending">
@@ -26,6 +28,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col">
             <div class="col">
                 <div class="col-md">
@@ -45,7 +48,7 @@
     </div>
     <br><br>
     {% if quantity_user_not_returned_orders > 0 %}
-        <div class="d-flex justify-content-center roller-books">
+        <div class="d-flex justify-content-center roller-books" style="padding-bottom: 40px">
             <div class="col-md-10">
                 <h5>Books to return</h5>
                 <hr>
@@ -70,7 +73,42 @@
                                 <td>{{ order.start_date }}</td>
                                 <td>{{ order.end_date }}</td>
                                 <td>{{ order.rent_time }}</td>
-                                <td>{{ order.time_to_return }}</td>
+                                <td>{% time_to_return order request %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if quantity_reservations > 0 %}
+        <div class="d-flex justify-content-center roller-books" style="padding-bottom: 40px">
+            <div class="col-md-10">
+                <h5>Reservations</h5>
+                <hr>
+                <div class="card-body table-books">
+                    <table class="table table-sm table-books">
+                        <tr>
+                            <th>Image</th>
+                            <th>Book name</th>
+                            <th>Book price</th>
+                            <th>Start rent date</th>
+                            <th>End rent date</th>
+                            <th>Rent time</th>
+
+                        </tr>
+
+                        {% for order in reservations %}
+                            <tr>
+                                <td><img src="{{ order.book.image_url }}" style="height: 70px" alt="Book's no photo">
+                                </td>
+                                <td>{{ order.book.title }}</td>
+                                <td>{{ order.book.price }}</td>
+                                <td>{{ order.start_date }}</td>
+                                <td>{{ order.end_date }}</td>
+                                <td>{{ order.rent_time }}</td>
                             </tr>
                         {% endfor %}
 

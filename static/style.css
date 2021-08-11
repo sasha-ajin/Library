@@ -1,12 +1,14 @@
-.roller-books{
+.roller-books {
     padding-top: 35px;
     /*background-color: white;*/
 }
-.table-books{
+
+.table-books {
     background-color: white;
     color: black;
     border-radius: 25px;
 }
+
 #total-orders {
     background-color: #4cb4c7;
 }
@@ -27,20 +29,25 @@
     background: #7abecc !important;
 
 }
-#cart-icon{
+
+#cart-icon {
     width: 35px;
 }
+
 .reg-icon {
     width: 20px;
 }
-.reg-card{
+
+.reg-card {
     width: 500px;
     height: 500px;
 }
-.login-card{
+
+.login-card {
     width: 400px;
     height: 300px;
 }
+
 .card {
     margin-top: auto;
     margin-bottom: auto;
@@ -68,6 +75,7 @@
     width: 100%;
     background: #33ccff !important;
     color: white !important;
+    margin-bottom: 10px; !important;
 }
 
 .login_btn:focus {
@@ -90,4 +98,11 @@
 .input_pass:focus {
     box-shadow: none !important;
     outline: 0px !important;
+}
+
+.profile_table_container {
+    margin-bottom: 45px;!important;
+}
+#select-day{
+
 }

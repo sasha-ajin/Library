@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'main',
     'django_filters',
     'library',
-    'rest_framework'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -49,8 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'library.middleware.ChangingTimeForNowMiddleware',
-    'library.middleware.DeleteNewOrdersMiddleware',
+    'library.middleware.ChangingTimeForNowMiddleware',
+    # 'library.middleware.DeleteNewOrdersMiddleware',
 ]
 
 ROOT_URLCONF = 'CRUD.urls'

@@ -1,0 +1,22 @@
+<tr>
+    <th>Image</th>
+    <th>Book name</th>
+    <th>Book price</th>
+    <th>Start rent date</th>
+    <th>End rent date</th>
+    <th>Rent time</th>
+
+</tr>
+
+
+<tr>
+    <td><img src="{{ order.book.image_url }}" style="height: 70px" alt="Book's no photo">
+    </td>
+    <td>{{ order.book.title }}</td>
+    <td>{{ order.book.price }}</td>
+    <td>{{ order.start_date }}</td>
+    <td>{{ order.end_date }}</td>
+    <td>{{ order.rent_time }}</td>
+</tr>
+
+
