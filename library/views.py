@@ -92,7 +92,11 @@ class OrderViewSet(ViewSet):
 
         book = Book.objects.get(id=request.data['book'])
         if end_date > book.max_date_to_order(request=request):
-            raise exceptions.ValidationError(f'Book {order.book.title} is not free in {end_date}')
+            raise exceptions.ValidationError(f'Book {book.title} is not free in {end_date}')
+        if start_date > end_date:
+            raise exceptions.ValidationError(
+                f'Book {book.title} start date is grater than end_date.start date : {start_date},'
+                f'end date: {end_date} ')
         if order.is_valid():
             order.save()
         return Response(order.data)
