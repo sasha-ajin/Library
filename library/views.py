@@ -135,31 +135,3 @@ class BookDetailView(APIView):
         book = Book.objects.get(id=pk)
         serializer = BookSerializer(book, many=False)
         return Response(serializer.data)
-
-# class Main(FormView):
-#     template_name = 'library/main.html'
-#     form_class = DateTimeForm
-#
-#     def form_valid(self, form):
-#         if self.request.user.is_authenticated:
-#             form_time = form.cleaned_data['time']
-#             # if object_time > form_time:
-#             #     print('Time was reduced')
-#             # elif object_time < form_time:
-#             #     print('Time was increased')
-#             # else:
-#             #     print('Time was not changed')
-#             current_time = TimeUser.objects.get(user=self.request.user)
-#             current_time.time = form_time
-#             current_time.save()
-#         return redirect('main')
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         object_time = self.request.time
-#         context['time'] = object_time
-#         books = Book.objects.all()
-#         context['books'] = books
-#         user = self.request.user.id
-#         context['user'] = user
-#         return context
