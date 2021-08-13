@@ -21,7 +21,6 @@ class Main(views.View):
             return self.get(request)
 
     def get(self, request):
-        print(Order.objects.all())
         context = {}
         context['time'] = request.time
         context['books'] = Book.objects.all()

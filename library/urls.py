@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import render, api, account
+from .views import render, api,account
+
 
 urlpatterns = [
     path('', render.Main.as_view(), name='main'),
