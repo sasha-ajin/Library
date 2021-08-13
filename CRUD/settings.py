@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+import warnings
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -136,3 +138,9 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ]
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# warnings.filterwarnings(
+#     'error', r"DateTimeField .* received a naive datetime",
+#     RuntimeWarning, r'django\.db\.models\.fields',
+# )

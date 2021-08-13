@@ -34,7 +34,6 @@ document.querySelectorAll('#button-order-create').forEach(button => {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrftoken
             },
-            // body: JSON.stringify({'book': book_id,'start_date': "2021-06-22T19:59:00Z", 'end_date': '2021-07-22T21:57:59Z'})
             body: JSON.stringify({'book': book_id, 'days_to_rent': days_to_rent})
         }).then(function (response) {
             alert('You rent the book ' + book_name + 'for ' + days_to_rent + ' days')

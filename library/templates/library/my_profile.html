@@ -73,7 +73,7 @@
                                 <td>{{ order.start_date }}</td>
                                 <td>{{ order.end_date }}</td>
                                 <td>{{ order.rent_time }}</td>
-                                <td>{% time_to_return order request %}
+                                <td>{% time_to_return order request.time %}
                                 </td>
                             </tr>
                         {% endfor %}
