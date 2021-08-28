@@ -82,11 +82,6 @@
     box-shadow: none !important;
     outline: 0px !important;
 }
-
-.login_container {
-    padding: 0 2rem;
-}
-
 .input-group-text {
     background: #f7ba5b !important;
     color: white !important;
@@ -102,7 +97,4 @@
 
 .profile_table_container {
     margin-bottom: 45px;!important;
-}
-#select-day{
-
 }
