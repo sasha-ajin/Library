@@ -28,7 +28,7 @@ class Book(models.Model):
     title = models.CharField(max_length=50, null=True)
     quantity_of_books = models.IntegerField()
     author = models.CharField(max_length=50, null=True)
-    price = models.DecimalField(decimal_places=2, max_digits=1000, null=False)
+    price = models.DecimalField(decimal_places=2, max_digits=60, null=False)
     cover = models.CharField(max_length=200, null=True, choices=COVERS)
     image = models.ImageField(null=True, blank=True)
 
@@ -44,7 +44,6 @@ class Book(models.Model):
         for order in orders_in_max_period:
             if order.start_date >= time_now:
                 critical_points += [order.start_date]
-        for order in orders_in_max_period:
             if order.end_date < max_available_date_to_order:
                 critical_points += [order.end_date]
         critical_points = list(dict.fromkeys(critical_points))  # deleting duplicates
@@ -52,11 +51,10 @@ class Book(models.Model):
         max_endpoint = time_now
         for critical_point in critical_points:
             start_dates_before_critical_point = int()
+            end_dates_before_critical_point = int()
             for order in orders_in_max_period:
                 if order.start_date < critical_point:
                     start_dates_before_critical_point += 1
-            end_dates_before_critical_point = int()
-            for order in orders_in_max_period:
                 if order.end_date < critical_point:
                     end_dates_before_critical_point += 1
             ordered_books = start_dates_before_critical_point - end_dates_before_critical_point
@@ -107,6 +105,8 @@ class Order(models.Model):
     def clean(self):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError(f'start_date {self.start_date} is grater than end_date {self.end_date}')
+        elif self.end_date > self.book.max_date_to_order(time_now=self.start_date):
+            raise exceptions.ValidationError(f'Book {self.book} is not valid in {self.end_date}')
 
     @property
     def rent_time(self):

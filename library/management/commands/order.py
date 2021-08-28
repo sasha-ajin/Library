@@ -43,7 +43,7 @@ class Command(BaseCommand):
             max_date = make_aware(datetime.datetime.strptime(options['generate_random_orders'][1], '%Y-%m-%d/%H:%M'))
             times = int(options['generate_random_orders'][2])
             if min_date < max_date:
-                self.stdout.write(f"Creating {times} random orders between  {str(min_date)} and {max_date} ")
+                self.stdout.write(f"Creating {times} random orders between  {str(min_date)} and {str(max_date)} ")
                 for time in range(times):
                     book = random.choice(Book.objects.all())
                     user = random.choice(User.objects.all())
