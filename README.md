@@ -26,7 +26,7 @@ pip install Pillows
 
 ### Connect DataBase
 
-In **library/settings.py** . More about connecting db here https://docs.djangoproject.com/en/4.0/ref/databases/#mariadb-notes
+In **library/settings.py** . More about connecting db herehttps://docs.djangoproject.com/en/4.0/ref/databases/
 
 ```
 ...
