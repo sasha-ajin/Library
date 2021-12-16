@@ -23,16 +23,9 @@ source bin/activate
 ```
 
 ```
-pip install django 
-```
+pip install -r requirements.txt ```
 
-```
-pip install django djangorestframework
-```
 
-```
-pip install Pillows
-```
 
 ### Connect DataBase
 
