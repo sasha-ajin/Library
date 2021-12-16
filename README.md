@@ -1,4 +1,4 @@
-# Install localy 
+# Running localy 
 
 ### Cloning
 
