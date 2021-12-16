@@ -54,7 +54,7 @@ And now write in console
 ```
 python manage.py migrate
 ```
-### Create super-user to go in django-admin-panel
+### Create super-user to go into django-admin-panel
 
 ```
 python manage.py createsuperuser
