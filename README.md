@@ -71,9 +71,11 @@ python manage.py migrate
 
 ```
 python manage.py createsuperuser
+```
 
-*Write your data*
+After you will write user data.You should see:
 
+```
 Superuser created successfully.
 
 ```
