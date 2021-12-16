@@ -12,15 +12,25 @@ Before you do that, you should have installed python on your machine
 
 ```
 python3 -m venv ~/.../environment
+```
 
+```
 cd  ~/.../environment
+```
 
+```
 source bin/activate
+```
 
+```
 pip install django 
+```
 
+```
 pip install django djangorestframework
+```
 
+```
 pip install Pillows
 ```
 
@@ -46,6 +56,9 @@ After that,you shoud install your engine to environment, if it is MySQL, it will
 
 ```
 pip install mysqlclient
+```
+
+```
 pip install sqlparse
 ```
 
