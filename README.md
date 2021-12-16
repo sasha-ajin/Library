@@ -72,10 +72,7 @@ python manage.py migrate
 ```
 python manage.py createsuperuser
 
-Username: admin
-Email address: admin@admin.com
-Password:
-Password (again):
+*Write your data*
 
 Superuser created successfully.
 
